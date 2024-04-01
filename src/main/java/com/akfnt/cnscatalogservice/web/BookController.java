@@ -2,6 +2,7 @@ package com.akfnt.cnscatalogservice.web;
 
 import com.akfnt.cnscatalogservice.domain.Book;
 import com.akfnt.cnscatalogservice.domain.BookService;
+import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
@@ -26,7 +27,7 @@ public class BookController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED) // 성공적으로 생성시 201 상태 코드를 반환
-    public Book post(@RequestBody Book book) {
+    public Book post(@Valid @RequestBody Book book) {
         return bookService.addBookToCatalog(book);
     }
 
@@ -37,7 +38,7 @@ public class BookController {
     }
 
     @PutMapping("{isbn}")
-    public Book put(@PathVariable String isbn, @RequestBody Book book) {
+    public Book put(@PathVariable String isbn, @Valid @RequestBody Book book) {
         return bookService.editBookDetails(isbn, book);
     }
 }
