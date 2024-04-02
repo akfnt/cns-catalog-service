@@ -33,6 +33,12 @@ dependencies {
 	testImplementation 'org.springframework.boot:spring-boot-starter-webflux'
 }
 
+// 개발 환경을 위한 속성 정의
+bootRun {
+	// systemProperty 'spring.profiles.active', 'testdata'
+	systemProperty 'polar.testdata.enabled', true
+}
+
 tasks.named('test') {
 	useJUnitPlatform()
 }
