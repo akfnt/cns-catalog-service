@@ -28,7 +28,7 @@ jobs:
           acs-report-enable: true       # 스캔이 완료된 이후에 리포트를 생성할지 여부
       - name: Upload vulnerability report
         uses: github/codeql-action/upload-sarif@v2  # 깃허브로 보안 취약성 리포트(SARIF 형식) 전송
-        if: success || failure          # 이전 단계가 실패하더라도 리포트 전송
+        if: success() || failure()          # 이전 단계가 실패하더라도 리포트 전송
         with:
           sarif_file: ${{ steps.scan.outputs.sarif }} # 이전 단계 결과의 리포트를 가져온다
       - name: Build, unit tests and integration tests
