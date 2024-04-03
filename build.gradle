@@ -29,6 +29,7 @@ configurations {
 dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-web'
 	implementation 'org.springframework.boot:spring-boot-starter-validation'
+	implementation 'org.springframework.boot:spring-boot-starter-actuator'
 	implementation 'org.springframework.cloud:spring-cloud-starter-config'
 	implementation 'org.springframework.retry:spring-retry'
 	// 프로젝트 빌드시 새로운 속성에 대한 메타데이터가 자동으로 생성되고, META-INF/spring-configuration-metadata.json 에 저장된다
