@@ -15,6 +15,10 @@ repositories {
 	mavenCentral()
 }
 
+ext {
+	set('springCloudVersion', "2023.0.1")
+}
+
 // 프로젝트를 빌드할때 그래들이 설정 프로세서를 사용하도록 설정
 configurations {
 	compileOnly {
@@ -25,12 +29,19 @@ configurations {
 dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-web'
 	implementation 'org.springframework.boot:spring-boot-starter-validation'
+	implementation 'org.springframework.cloud:spring-cloud-starter-config'
 	// 프로젝트 빌드시 새로운 속성에 대한 메타데이터가 자동으로 생성되고, META-INF/spring-configuration-metadata.json 에 저장된다
 	// IDE 에서 해당 항목을 선택해 각 속성에 대한 설명 메시지를 표시할 수 있고, 자동 완성 및 유형 검사도 가능하다
 	// Intellij Ultimate Edition 아닐 경우 https://github.com/ThomasVitale/cloud-native-spring-in-action/blob/main/Guides/configuring-intellij-idea.md 에서 추가 설정 필요
 	annotationProcessor 'org.springframework.boot:spring-boot-configuration-processor'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	testImplementation 'org.springframework.boot:spring-boot-starter-webflux'
+}
+
+dependencyManagement {
+	imports {
+		mavenBom "org.springframework.cloud:spring-cloud-dependencies:${springCloudVersion}"
+	}
 }
 
 // 개발 환경을 위한 속성 정의
