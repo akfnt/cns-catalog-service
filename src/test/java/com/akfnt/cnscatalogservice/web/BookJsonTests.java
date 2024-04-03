@@ -15,30 +15,36 @@ public class BookJsonTests {
 
     @Test
     void testSerialize() throws Exception {
-        var book = new Book("1234567890", "Title", "Author", 9.90);
-        var jsonContext = json.write(book);
-        assertThat(jsonContext).extractingJsonPathStringValue("@.isbn")
+        var book = new Book(394L,"1234567890", "Title", "Author", 9.90, 21);
+        var jsonContent = json.write(book);
+        assertThat(jsonContent).extractingJsonPathNumberValue("@.id")
+                .isEqualTo(book.id().intValue());
+        assertThat(jsonContent).extractingJsonPathStringValue("@.isbn")
                 .isEqualTo(book.isbn());
-        assertThat(jsonContext).extractingJsonPathStringValue("@.title")
+        assertThat(jsonContent).extractingJsonPathStringValue("@.title")
                 .isEqualTo(book.title());
-        assertThat(jsonContext).extractingJsonPathStringValue("@.author")
+        assertThat(jsonContent).extractingJsonPathStringValue("@.author")
                 .isEqualTo(book.author());
-        assertThat(jsonContext).extractingJsonPathNumberValue("@.price")
+        assertThat(jsonContent).extractingJsonPathNumberValue("@.price")
                 .isEqualTo(book.price());
+        assertThat(jsonContent).extractingJsonPathNumberValue("@.version")
+                .isEqualTo(book.version());
     }
 
     @Test
     void testDeserialize() throws Exception {
         var content = """
                 {
+                    "id": 394,
                     "isbn":"1234567890",
                     "title":"Title",
                     "author":"Author",
-                    "price":9.90
+                    "price":9.90,
+                    "version": 21
                 }
                 """;
         assertThat(json.parse(content))
                 .usingRecursiveComparison()
-                .isEqualTo(new Book("1234567890", "Title", "Author", 9.90));
+                .isEqualTo(new Book(394L, "1234567890", "Title", "Author", 9.90, 21));
     }
 }

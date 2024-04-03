@@ -21,8 +21,9 @@ public class BookDataLoader {
     // 이 이벤트는 애플리케이션 시작 단계가 완료되면 트리거 된다
     @EventListener(ApplicationReadyEvent.class)
     public void loadBookTestData() {
-        var book1 = new Book("1234567891", "Northern Lights", "Lyra Silverstar", 9.90);
-        var book2 = new Book("1234567892", "Polar Journey", "Iorek Polarson", 12.90);
+        // 프레임워크가 내부적으로 식별자와 버전에 대한 할당값을 처리한다
+        var book1 = Book.of("1234567891", "Northern Lights", "Lyra Silverstar", 9.90);
+        var book2 = Book.of("1234567892", "Polar Journey", "Iorek Polarson", 12.90);
 
         bookRepository.save(book1);
         bookRepository.save(book2);
