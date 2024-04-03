@@ -14,6 +14,13 @@ spring:
         initial-interval: 1000          # 최초 재시도 지연 시간(밀리초)
         max-interval: 2000              # 재시도 지연 최대 시간(밀리초)
         multiplier: 1.1                 # 지연 시간 계산 승수
+  datasource:                           # PostgreSQL 을 컨테이너로 실행하는 명령어: docker run -d --name polar-postgres -e POSTGRES_USER=user -e POSTGRES_PASSWORD=password -e POSTGRES_DB=polardb_catalog -p 5432:5432 postgres:14.4
+    username: user
+    password: password
+    url: jdbc:postgresql://localhost:5432/polardb_catalog
+    hikari:
+      connection-timeout: 2000          # 풀에서 연결 객체를 얻기 위해 기다려야 하는 최대 시간 (밀리초)
+      maximum-pool-size: 5              # 히카리CP가 풀에 최대한으로 유지할 수 있는 연결 객체의 개수
 
 server:
   port: 9001
