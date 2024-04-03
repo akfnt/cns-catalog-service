@@ -21,6 +21,9 @@ spring:
     hikari:
       connection-timeout: 2000          # 풀에서 연결 객체를 얻기 위해 기다려야 하는 최대 시간 (밀리초)
       maximum-pool-size: 5              # 히카리CP가 풀에 최대한으로 유지할 수 있는 연결 객체의 개수
+  sql:                                  # SQL 스크립트에서 데이터베이스 스키마 초기화
+    init:
+      mode: always
 
 server:
   port: 9001
