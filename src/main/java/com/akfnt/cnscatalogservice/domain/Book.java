@@ -27,6 +27,7 @@ public record Book(
         @NotNull(message = "The book price must be defined.")
         @Positive(message = "The book price must be greater than zero.")
         Double price,
+        String publisher,
 
         @CreatedDate
         Instant createdDate,
@@ -39,8 +40,8 @@ public record Book(
         @Version
         int version
 ) {
-        public static Book of(String isbn, String title, String author, Double price) {
+        public static Book of(String isbn, String title, String author, Double price, String publisher) {
                 // id가 널이고 버전이 0이면 새로운 엔티티로 인식함
-                return new Book(null, isbn, title, author, price, null,null,0);
+                return new Book(null, isbn, title, author, price, publisher, null, null,0);
         }
 }

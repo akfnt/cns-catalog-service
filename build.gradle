@@ -35,6 +35,7 @@ dependencies {
 	runtimeOnly 'org.postgresql:postgresql'
 	implementation 'org.springframework.cloud:spring-cloud-starter-config'
 	implementation 'org.springframework.retry:spring-retry'
+	// flyway: SQL 마이그레이션(src/main/resources/db/migration/) - for DDL, 자바 마이그레이션(src/main/java/db/migration/) for DML
 	implementation 'org.flywaydb:flyway-core'
 	// 프로젝트 빌드시 새로운 속성에 대한 메타데이터가 자동으로 생성되고, META-INF/spring-configuration-metadata.json 에 저장된다
 	// IDE 에서 해당 항목을 선택해 각 속성에 대한 설명 메시지를 표시할 수 있고, 자동 완성 및 유형 검사도 가능하다
