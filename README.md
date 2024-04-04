@@ -19,10 +19,10 @@ docker exec -it polar-postgres psql -U user -d polardb_catalog
 
 From within the PSQL console, you can also fetch all the data stored in the book table.
 ```sql
-select * from book;
+select * from "book";
 ```
 
 The following query is to fetch all the data stored in the flyway_schema_history table.
 ```sql
-select * from flyway_schema_history;
+select * from "flyway_schema_history";
 ```
