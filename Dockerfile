@@ -14,6 +14,10 @@ RUN java -Djarmode=layertools -jar cns-catalog-service.jar extract
 
 # 두 번째 단계를 위한 OpenJDK 베이스 이미지
 FROM eclipse-temurin:21
+# 'spring' 이라는 이름의 유저를 만든다 (보안 - 최소 권한 액세스)
+RUN useradd spring
+# 'spring' 을 현재 유저로 설정한다 (보안 - 최소 권한 액세스)
+USER spring
 # 현재 작업 폴더를 workspace로 변경
 WORKDIR workspace
 
