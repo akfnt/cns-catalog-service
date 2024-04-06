@@ -141,7 +141,69 @@ kubectl config current-context
 kubectl config use-context cns-polar
 ```
 
+### 쿠버네티스 클러스터에 매니패스트 적용하기 (매니패스트 파일이 있는 위치로 이동)
+```
+# 이미지가 로컬에 있는 경우 (클라우드 네이티브 빌드팩으로 이미지를 생성한 경우) 이미지를 수동으로 미니큐브 로컬 클러스터로 불러오기
+minikube image load cns-catalog-service --profile cns-polar
 
+# services 폴더 내의 매니페스트에 정의된 리소스를 생성함 (폴더 대신 파일을 지정해도 됨)
+kubectl apply -f services
+kubectl apply -f k8s
+
+# 생성된 pod 정보 보기
+kubectl get pod
+kubectl get pods -l app=cns-catalog-service
+
+# pod 로그 확인하기 ('polar-postgres' 이름의 Deployment 객체에 속한 모든 pod 의 로그를 출력) 
+kubectl logs deployment/polar-postgres
+
+# 매니페스트로부터 어떤 객체가 만들어졌는지 확인
+kubectl get all -l app=cns-catalog-service
+
+# 서비스 객체만 확인하고 싶을땐
+kubectl get svc -l app=cns-catalog-service
+
+# 객체(서비스 객체)를 로컬 컴퓨터에 노출하기 위해 구버네티스가 제공하는 포트 포워딩 기능을 사용
+kubectl port-forward service/cns-catalog-service 9001:80
+```
+
+### 주어진 객체에 대해 쿠버네티스가 지원하는 API 버전 확인하기
+```
+kubectl explain <object_name>
+ex) object_name -> Deployment
+```
+
+### 파드 삭제
+```
+kubectl delete pod <pod-name>
+```
+
+### k8s 폴더안의 매니페스트 모든 객체 삭제
+```
+kubectl delete -f k8s
+```
+
+### Tilt 시작하기 (Tiltfile 이 있는 해당 애플리케이션 루트 폴더로 이동)
+```
+tilt up
+
+# 추가로 실행해야 할 경우 포트를 지정
+tilt up --port=12345
+
+# 틸트 종료
+tilt down
+```
+
+### Octant 실행하기 (옥탄트 대시보드)
+```
+쿠버네티스 클러스터가 계속 실행되고 있고, 여기에 애플리케이션 서비스 배포도 되어 있는 상태에서 아래 명령어 실행
+octant
+```
+
+### 큐비발 실행 (쿠버네티스 매니페스트 검증)
+```
+kubeval --strict -d k8s
+```
 
 ## 그래들 커맨드 예시
 ### 클라우드 네이티브 빌드팩 사용하여 이미지 만들고 깃허브 저장소에 해당 이미지 푸시하기
