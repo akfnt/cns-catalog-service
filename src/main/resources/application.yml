@@ -1,6 +1,8 @@
 spring:
   application:
     name: cns-catalog-service
+  lifecycle:
+    timeout-per-shutdown-phase: 15s     # 15초의 종료기간을 둔다
   config:
     import: "optional:configserver:"
   cloud:
@@ -25,6 +27,7 @@ spring:
 
 server:
   port: 9001
+  shutdown: graceful                    # 우아한 종료 활성화
   tomcat:
     connection-timeout: 2s
     keep-alive-timeout: 15s

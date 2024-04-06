@@ -17,6 +17,10 @@ spec:
       - name: cns-catalog-service         # 파드 이름
         image: cns-catalog-service        # 컨테이너를 실행하기 위해 사용할 이미지. 태그가 정의되지 않으면 latest가 암묵적으로 사용된다
         imagePullPolicy: IfNotPresent     # 이미지가 로컬에 없는 경우에만 컨테이너 저장소에서 이미지를 다운로드 받을 것을 쿠버네티스에 지시
+        lifecycle:
+          preStop:                        # 쿠버네티스가 클러스터 전체에 요청 전달 명령을 전파할 수 있는 충분한 시간을 확보하기 위해
+            exec:                         # 쿠버네티스가 파드에 SIGTERM 신호를 보내기 전에 5초를 기다리게 한다
+              command: [ "sh", "-c", "sleep 5" ]
         ports:
           - containerPort: 9001           # 컨테이너에 의해 노출되는 포트
         env:                              # 파드로 전달되는 환경변수의 목록
