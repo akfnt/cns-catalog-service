@@ -110,7 +110,7 @@ docker-compose up -d
 docker-compose up -d polar-postgres
 
 # 중지
-docker-compost down
+docker-compose down
 ```
 
 
