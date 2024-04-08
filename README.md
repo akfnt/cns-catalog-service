@@ -105,6 +105,10 @@ select * from "flyway_schema_history";
 ### 도커 컴포즈 실행하기 (도커 컴포즈 YAML 파일 있는 위치에서)
 ```
 docker-compose up -d
+
+# 특정 컨테이너만 실행하기
+docker-compose up -d polar-postgres
+
 # 중지
 docker-compost down
 ```
