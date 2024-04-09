@@ -182,6 +182,12 @@ ex) object_name -> Deployment
 kubectl delete pod <pod-name>
 ```
 
+### DB 접속
+```
+kubectl exec -it <pod-name> -- bash
+psql -U user
+```
+
 ### k8s 폴더안의 매니페스트 모든 객체 삭제
 ```
 kubectl delete -f k8s
