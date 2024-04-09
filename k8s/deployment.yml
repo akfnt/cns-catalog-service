@@ -28,10 +28,10 @@ spec:
           - name: BPL_JVM_THREAD_COUNT
             value: "50"
           - name: SPRING_DATASOURCE_URL
-            value: "jdbc:postgresql://polar-postgres:5432/polardb_catalog"
+            value: "jdbc:postgresql://polar-postgres/polardb_catalog"
           - name: POLAR_TESTDATA_ENABLED
             value: "true"
           - name: SPRING_CLOUD_CONFIG_URI
-            value: "http://cns-config-service:8888"
+            value: "http://cns-config-service"
           - name: SPRING_CLOUD_CONFIG_FAIL-FAST
             value: "true"
