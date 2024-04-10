@@ -220,3 +220,9 @@ kubeval --strict -d k8s
 ```
 ./gradlew bootBuildImage --imageName ghcr.io/akfnt/cns-catalog-service --publishImage -PregistryUrl="ghcr.io" -PregistryUsername=akfnt -PregistryToken=
 ```
+
+## 기타 커맨드 예시
+### 아파치 벤치 (웹서버 성능 테스트 도구)
+```
+ab -n 21 -c 1 -m POST http://localhost:9000/orders
+```
