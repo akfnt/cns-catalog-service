@@ -215,6 +215,22 @@ octant
 kubeval --strict -d k8s
 ```
 
+### 쿠버네티스 인그레스 (Ingress)
+```
+# ingress 애드온 활성화 하기 (인그레스 NGINX가 로컬 클러스터에 배포됨)
+minikube addons enable ingress --profile cns-polar
+kubectl get all -n ingress-nginx
+
+# 미니큐브 클러스터에 할당된 IP 주소 확인하기 (리눅스)
+minikube ip --profile cns-polar
+# 윈도우의 경우 아래 명령을 사용해 클러스터를 로컬 환경에 노출한 후 127.0.0.1 주소를 통해 클러스터를 호출해야 함
+minikube tunnel --profile cns-polar
+
+kubectl apply -f k8s
+kubectl get ingress
+
+```
+
 ## 그래들 커맨드 예시
 ### 클라우드 네이티브 빌드팩 사용하여 이미지 만들고 깃허브 저장소에 해당 이미지 푸시하기
 ```
