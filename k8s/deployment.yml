@@ -35,3 +35,5 @@ spec:
             value: "http://cns-config-service"
           - name: SPRING_CLOUD_CONFIG_FAIL-FAST
             value: "true"
+          - name: SPRING_SECURITY_OAUTH2_RESOURCESERVER_JWT_ISSUER_URI
+            value: "http://polar-keycloak/realms/PolarBookshop"
