@@ -37,11 +37,12 @@ class CnsCatalogServiceApplicationTests {
 
 	@Container
 	private static final KeycloakContainer keycloakContainer = new KeycloakContainer("quay.io/keycloak/keycloak:23.0")
-			.withRealmImportFile("test-realm-config.json");
+			.withRealmImportFile("/test-realm-config.json");
 
 	@DynamicPropertySource
 	static void dynamicProperties(DynamicPropertyRegistry registry) {
-		registry.add("spring.security.oauth2.resourceserver.jwt.issuer-uri", () -> keycloakContainer.getAuthServerUrl() + "/realms/PolarBookshop");
+		registry.add("spring.security.oauth2.resourceserver.jwt.issuer-uri",
+				() -> keycloakContainer.getAuthServerUrl() + "/realms/PolarBookshop");
 	}
 
 	@BeforeAll
@@ -137,7 +138,7 @@ class CnsCatalogServiceApplicationTests {
 				.returnResult().getResponseBody();
 		var bookToUpdate = new Book(createdBook.id(), createdBook.isbn(), createdBook.title(), createdBook.author(), 7.95,
 				createdBook.publisher(), createdBook.createdDate(), createdBook.lastModifiedDate(),
-				createdBook.version());
+				createdBook.createdBy(), createdBook.lastModifiedBy(), createdBook.version());
 
 		webTestClient
 				.put()
@@ -186,21 +187,21 @@ class CnsCatalogServiceApplicationTests {
 				.post()
 				.body(		// 키클록과 직접 인증하기 위해 패스워드 부여 흐름을 사용한다 (패스워드 그랜트 - 테스트 목적으로만 사용)
 						BodyInserters.fromFormData("grant_type", "password")
-								.with("client_id", "polar-test")
-								.with("username", username)
-								.with("password", password)
+						.with("client_id", "polar-test")
+						.with("username", username)
+						.with("password", password)
 				)
 				.retrieve()
 				.bodyToMono(KeycloakToken.class)
-				.block();		// 명령형 방식으로 WebClient 사용
+				.block();
 	}
 
 	private record KeycloakToken(String accessToken) {
-		@JsonCreator		// 잭슨이 이 생성자를 통해 JSON 을 KeycloakToken 객체로 역직렬화하도록 지시한다
-		private KeycloakToken(
-				@JsonProperty("access_token") final String accessToken
-		) {
+		// 잭슨이 이 생성자를 통해 JSON 을 KeycloakToken 객체로 역직렬화하도록 지시한다
+		@JsonCreator
+		private KeycloakToken(@JsonProperty("access_token") final String accessToken) {
 			this.accessToken = accessToken;
 		}
+
 	}
 }

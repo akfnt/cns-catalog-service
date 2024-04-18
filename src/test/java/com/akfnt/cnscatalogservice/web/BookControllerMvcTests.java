@@ -29,13 +29,13 @@ public class BookControllerMvcTests {
     private static final String ROLE_CUSTOMER = "ROLE_customer";
 
     @Autowired
-    private MockMvc mockMvc;
+    MockMvc mockMvc;
 
     @Autowired
     ObjectMapper objectMapper;
 
     @MockBean
-    private BookService bookService;
+    BookService bookService;
 
     @MockBean
     private JwtDecoder jwtDecoder;      // 애플리케이션이 액세스 토큰 해독을 위한 공개 키를 받기 위해 키클록에 연결하지 않도록 한다
