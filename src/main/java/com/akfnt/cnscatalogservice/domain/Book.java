@@ -4,10 +4,7 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Positive;
-import org.springframework.data.annotation.CreatedDate;
-import org.springframework.data.annotation.Id;
-import org.springframework.data.annotation.LastModifiedDate;
-import org.springframework.data.annotation.Version;
+import org.springframework.data.annotation.*;
 
 import java.time.Instant;
 
@@ -33,6 +30,10 @@ public record Book(
         Instant createdDate,
         @LastModifiedDate
         Instant lastModifiedDate,
+        @CreatedBy
+        String createdBy,
+        @LastModifiedBy
+        String lastModifiedBy,
 
         // 낙관적 잠금(optimistic locking)을 위해 사용되는 엔티티 버전 번호
         // 업데이트 시 업데이트를 위해 읽은 이후 변경사항이 있는지 확인 -> 변경사항 있으면 업데이트는 수행되지 않고 예외를 발생시킴
@@ -42,6 +43,6 @@ public record Book(
 ) {
         public static Book of(String isbn, String title, String author, Double price, String publisher) {
                 // id가 널이고 버전이 0이면 새로운 엔티티로 인식함
-                return new Book(null, isbn, title, author, price, publisher, null, null,0);
+                return new Book(null, isbn, title, author, price, publisher, null, null,null, null, 0);
         }
 }

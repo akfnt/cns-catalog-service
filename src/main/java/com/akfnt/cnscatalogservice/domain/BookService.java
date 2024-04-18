@@ -42,6 +42,8 @@ public class BookService {
                             book.publisher(),
                             existingBook.createdDate(),
                             existingBook.lastModifiedDate(),    // 업데이트 성공 시 스프링 데이터에 의해 자동으로 변경됨
+                            existingBook.createdBy(),
+                            existingBook.lastModifiedBy(),
                             existingBook.version()  // 기존 책 버전 사용 시 업데이트가 성공하면 자동으로 증가한다
                     );
                     return bookRepository.save(bookToUpdate);
