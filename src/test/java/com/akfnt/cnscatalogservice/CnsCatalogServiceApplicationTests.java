@@ -1,11 +1,23 @@
 package com.akfnt.cnscatalogservice;
 
 import com.akfnt.cnscatalogservice.domain.Book;
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import dasniko.testcontainers.keycloak.KeycloakContainer;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.DynamicPropertyRegistry;
+import org.springframework.test.context.DynamicPropertySource;
 import org.springframework.test.web.reactive.server.WebTestClient;
+import org.springframework.web.reactive.function.BodyInserters;
+import org.springframework.web.reactive.function.client.WebClient;
+import org.testcontainers.junit.jupiter.Container;
+import org.testcontainers.junit.jupiter.Testcontainers;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -13,10 +25,35 @@ import static org.assertj.core.api.Assertions.assertThat;
 		webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT
 )
 @ActiveProfiles("integration")
+@Testcontainers
 class CnsCatalogServiceApplicationTests {
+	// Customer
+	private static KeycloakToken bjornTokens;
+	// Customer and employee
+	private static KeycloakToken isabelleTokens;
 
 	@Autowired
 	private WebTestClient webTestClient;
+
+	@Container
+	private static final KeycloakContainer keycloakContainer = new KeycloakContainer("quay.io/keycloak/keycloak:23.0")
+			.withRealmImportFile("test-realm-config.json");
+
+	@DynamicPropertySource
+	static void dynamicProperties(DynamicPropertyRegistry registry) {
+		registry.add("spring.security.oauth2.resourceserver.jwt.issuer-uri", () -> keycloakContainer.getAuthServerUrl() + "/realms/PolarBookshop");
+	}
+
+	@BeforeAll
+	static void generateAccessTokens() {
+		WebClient webClient = WebClient.builder()
+				.baseUrl(keycloakContainer.getAuthServerUrl() + "/realms/PolarBookshop/protocol/openid-connect/token")
+				.defaultHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_FORM_URLENCODED_VALUE)
+				.build();
+
+		isabelleTokens = authenticateWith("isabelle", "password", webClient);
+		bjornTokens = authenticateWith("bjorn", "password", webClient);
+	}
 
 	@Test
 	void whenGetRequestWithIdThenBookReturned() {
@@ -25,6 +62,7 @@ class CnsCatalogServiceApplicationTests {
 		Book expectedBook = webTestClient
 				.post()
 				.uri("/books")
+				.headers(headers -> headers.setBearerAuth(isabelleTokens.accessToken()))
 				.bodyValue(bookToCreate)
 				.exchange()
 				.expectStatus().isCreated()
@@ -49,6 +87,7 @@ class CnsCatalogServiceApplicationTests {
 		webTestClient
 				.post()
 				.uri("/books")
+				.headers(headers -> headers.setBearerAuth(isabelleTokens.accessToken()))
 				.bodyValue(expectedBook)
 				.exchange()
 				.expectStatus().isCreated()
@@ -59,23 +98,51 @@ class CnsCatalogServiceApplicationTests {
 	}
 
 	@Test
+	void whenPostRequestUnauthenticatedThen401() {
+		var expectedBook = Book.of("1231231231", "Title", "Author", 9.90, "Polarsophia");
+
+		webTestClient
+				.post()
+				.uri("/books")
+				.bodyValue(expectedBook)
+				.exchange()
+				.expectStatus().isUnauthorized();
+	}
+
+	@Test
+	void whenPostRequestUnauthorizedThen403() {
+		var expectedBook = Book.of("1231231231", "Title", "Author", 9.90, "Polarsophia");
+
+		webTestClient
+				.post()
+				.uri("/books")
+				.headers(headers -> headers.setBearerAuth(bjornTokens.accessToken()))
+				.bodyValue(expectedBook)
+				.exchange()
+				.expectStatus().isForbidden();
+	}
+
+	@Test
 	void whenPutRequestThenBookUpdated() {
 		var bookIsbn = "1231231232";
 		var bookToCreate = Book.of(bookIsbn, "Title", "Author", 9.90, "Polarsophia");
 		Book createdBook = webTestClient
 				.post()
 				.uri("/books")
+				.headers(headers -> headers.setBearerAuth(isabelleTokens.accessToken()))
 				.bodyValue(bookToCreate)
 				.exchange()
 				.expectStatus().isCreated()
 				.expectBody(Book.class).value(book -> assertThat(book).isNotNull())
 				.returnResult().getResponseBody();
 		var bookToUpdate = new Book(createdBook.id(), createdBook.isbn(), createdBook.title(), createdBook.author(), 7.95,
-				createdBook.publisher(), createdBook.createdDate(), createdBook.lastModifiedDate(), createdBook.version());
+				createdBook.publisher(), createdBook.createdDate(), createdBook.lastModifiedDate(),
+				createdBook.version());
 
 		webTestClient
 				.put()
 				.uri("/books/" + bookIsbn)
+				.headers(headers -> headers.setBearerAuth(isabelleTokens.accessToken()))
 				.bodyValue(bookToUpdate)
 				.exchange()
 				.expectStatus().isOk()
@@ -92,6 +159,7 @@ class CnsCatalogServiceApplicationTests {
 		webTestClient
 				.post()
 				.uri("/books")
+				.headers(headers -> headers.setBearerAuth(isabelleTokens.accessToken()))
 				.bodyValue(bookToCreate)
 				.exchange()
 				.expectStatus().isCreated();
@@ -99,6 +167,7 @@ class CnsCatalogServiceApplicationTests {
 		webTestClient
 				.delete()
 				.uri("/books/" + bookIsbn)
+				.headers(headers -> headers.setBearerAuth(isabelleTokens.accessToken()))
 				.exchange()
 				.expectStatus().isNoContent();
 
@@ -112,4 +181,26 @@ class CnsCatalogServiceApplicationTests {
 				);
 	}
 
+	private static KeycloakToken authenticateWith(String username, String password, WebClient webClient) {
+		return webClient
+				.post()
+				.body(		// 키클록과 직접 인증하기 위해 패스워드 부여 흐름을 사용한다 (패스워드 그랜트 - 테스트 목적으로만 사용)
+						BodyInserters.fromFormData("grant_type", "password")
+								.with("client_id", "polar-test")
+								.with("username", username)
+								.with("password", password)
+				)
+				.retrieve()
+				.bodyToMono(KeycloakToken.class)
+				.block();		// 명령형 방식으로 WebClient 사용
+	}
+
+	private record KeycloakToken(String accessToken) {
+		@JsonCreator		// 잭슨이 이 생성자를 통해 JSON 을 KeycloakToken 객체로 역직렬화하도록 지시한다
+		private KeycloakToken(
+				@JsonProperty("access_token") final String accessToken
+		) {
+			this.accessToken = accessToken;
+		}
+	}
 }
