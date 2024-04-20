@@ -43,12 +43,17 @@ dependencies {
 	// IDE 에서 해당 항목을 선택해 각 속성에 대한 설명 메시지를 표시할 수 있고, 자동 완성 및 유형 검사도 가능하다
 	// Intellij Ultimate Edition 아닐 경우 https://github.com/ThomasVitale/cloud-native-spring-in-action/blob/main/Guides/configuring-intellij-idea.md 에서 추가 설정 필요
 	annotationProcessor 'org.springframework.boot:spring-boot-configuration-processor'
+	compileOnly 'org.projectlombok:lombok:1.18.32'
+	annotationProcessor 'org.projectlombok:lombok:1.18.32'
+
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	testImplementation 'org.springframework.boot:spring-boot-starter-webflux'
 	testImplementation 'org.testcontainers:postgresql'
 	testImplementation 'org.springframework.security:spring-security-test'
 	testImplementation 'org.testcontainers:junit-jupiter'
 	testImplementation "com.github.dasniko:testcontainers-keycloak:${testKeycloakVersion}"
+	testCompileOnly 'org.projectlombok:lombok:1.18.32'
+	testAnnotationProcessor 'org.projectlombok:lombok:1.18.32'
 }
 
 dependencyManagement {

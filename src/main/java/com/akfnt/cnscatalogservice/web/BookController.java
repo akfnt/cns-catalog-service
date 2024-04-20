@@ -3,9 +3,11 @@ package com.akfnt.cnscatalogservice.web;
 import com.akfnt.cnscatalogservice.domain.Book;
 import com.akfnt.cnscatalogservice.domain.BookService;
 import jakarta.validation.Valid;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
+@Slf4j
 @RestController
 @RequestMapping("books")    // 클래스가 핸들러를 제공하는 루트 패스 URI("/books")를 인식
 public class BookController {
@@ -16,7 +18,9 @@ public class BookController {
     }
 
     @GetMapping
-    public Iterable<Book> get() {
+    public Iterable<Book> get()
+    {
+        log.info("Fetching the list of books in the catalog");
         return bookService.viewBookList();
     }
 
