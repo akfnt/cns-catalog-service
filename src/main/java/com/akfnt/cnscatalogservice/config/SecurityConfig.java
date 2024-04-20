@@ -19,6 +19,7 @@ public class SecurityConfig {
     SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         return http
                 .authorizeHttpRequests(authorize -> authorize
+                        .requestMatchers("/actuator/**").permitAll()                       // 임시적으로 스프링 부트 액추에이터 엔드포인트에 인증되지 않은 액세스를 허용한다
                         .requestMatchers(HttpMethod.GET, "/", "/books/**").permitAll()     // 인증하지 않고도 인사말과 책의 정보를 제공하도록 허용한다
                         .anyRequest().hasRole("employee"))                                          // 그 외 다른 요청은 인증이 필요할 뿐만 아니라 employee 역할도 가지고 있어야 한다 (ROLE_employee 권한과 동일 -> 내부적으로 'ROLE_' 접두사 붙여서 처리됨)
                 .oauth2ResourceServer(oauth2 -> oauth2.jwt(Customizer.withDefaults()))              // JWT 에 기반한 기본 설정을 사용해 OAuth2 리소스 서버 지원을 활성화한다(JWT 인증)
