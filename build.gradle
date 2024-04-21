@@ -66,6 +66,10 @@ dependencyManagement {
 	}
 }
 
+springBoot {
+	buildInfo()		// 빌드 정보를 META-INF/build-info.properties 파일에 저장한다. 이 파일을 BuildProperties 객체로 읽어들인다. -> info 엔드포인트 응답에 포함됨
+}
+
 // 개발 환경을 위한 속성 정의
 bootRun {
 	// systemProperty 'spring.profiles.active', 'testdata'
