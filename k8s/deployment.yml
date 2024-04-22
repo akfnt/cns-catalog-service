@@ -31,8 +31,6 @@ spec:
         env:                              # 파드로 전달되는 환경변수의 목록
           - name: BPL_JVM_THREAD_COUNT
             value: "50"
-          - name: POLAR_TESTDATA_ENABLED
-            value: "true"
         livenessProbe:
           httpGet:
             path: /actuator/health/liveness
