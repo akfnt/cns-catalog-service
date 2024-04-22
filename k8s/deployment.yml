@@ -31,16 +31,8 @@ spec:
         env:                              # 파드로 전달되는 환경변수의 목록
           - name: BPL_JVM_THREAD_COUNT
             value: "50"
-          - name: SPRING_DATASOURCE_URL
-            value: "jdbc:postgresql://polar-postgres/polardb_catalog"
           - name: POLAR_TESTDATA_ENABLED
             value: "true"
-          - name: SPRING_CLOUD_CONFIG_URI
-            value: "http://cns-config-service"
-          - name: SPRING_CLOUD_CONFIG_FAIL-FAST
-            value: "true"
-          - name: SPRING_SECURITY_OAUTH2_RESOURCESERVER_JWT_ISSUER_URI
-            value: "http://polar-keycloak/realms/PolarBookshop"
         livenessProbe:
           httpGet:
             path: /actuator/health/liveness
@@ -53,3 +45,10 @@ spec:
             port: 9001
           initialDelaySeconds: 5
           periodSeconds: 15
+        volumeMounts:
+          - name: catalog-config-volume
+            mountPath: /workspace/config  # 스프링 부트는 자동으로 이 폴더에서 속성 파일을 찾고 로드한다
+      volumes:
+        - name: catalog-config-volume
+          configMap:
+            name: cns-catalog-config

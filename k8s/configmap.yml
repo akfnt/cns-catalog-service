@@ -1,0 +1,18 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: cns-catalog-config
+  labels:
+    app: cns-catalog-service
+data:
+  application.yml: |
+    polar:
+      greeting: Welcome to the book catalog from Kubernetes!
+    spring:
+      datasource:
+        url: jdbc:postgresql://polar-postgres:5432/polardb_catalog
+      security:
+        oauth2:
+          resourceserver:
+            jwt:
+              issuer-uri: http://polar-keycloak:8080/realms/PolarBookshop
