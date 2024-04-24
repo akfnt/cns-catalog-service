@@ -157,6 +157,8 @@ kubectl apply -f k8s
 # 생성된 pod 정보 보기
 kubectl get pod
 kubectl get pods -l app=cns-catalog-service
+kubectl get pods -l app=cns-catalog-service --watch
+kubectl describe pods
 
 # pod 로그 확인하기 ('polar-postgres' 이름의 Deployment 객체에 속한 모든 pod 의 로그를 출력) 
 kubectl logs deployment/polar-postgres
@@ -265,10 +267,10 @@ doctl database db create <postgres_id> polardb_catalog
 doctl database db create <postgres_id> polardb_order
 doctl databases connection <postgres_id> --format Host,Port,User,Password
 
-kubectl create secret generic polar-postgres-catalog-service-credentials --from-literal=spring.datasource.url=jdbc:postgre
+kubectl create secret generic polar-postgres-catalog-credentials --from-literal=spring.datasource.url=jdbc:postgre
 sql://<postgres_host>:<postgres_port>/polardb_catalog --from-literal=spring.datasource.username=<postgres_username> --from-literal=spring.datasource.password=<postgres_password>
 
-kubectl create secret generic polar-postgres-order-service-credentials --from-literal=spring.flyway.url="jdbc:postgresql:/
+kubectl create secret generic polar-postgres-order-credentials --from-literal=spring.flyway.url="jdbc:postgresql:/
 /<postgres_host>:<postgres_port>/polardb_order" --from-literal="spring.r2dbc.url=r2dbc:postgresql://polar-db-do-user-16449157-0.c.db.ondigitalocean.com:25060/polardb_order?ssl=true&sslMode=require" --from-literal=spring.datasource.username=<postgres_username> --from-literal=spring.datasource.password=<postgres_password>
 
 Redis 실행
@@ -278,5 +280,9 @@ doctl databases connection <redis_id> --format Host,Port,User,Password
 
 kubectl create secret generic polar-redis-credentials --from-literal=spring.data.redis.host=<redis_host> --from-literal=spring.data.redis.port=<redis_port> --from-literal=spring.data.redis.username=<redis_username> --from-literal=spring.data.redis.password=<redis_password> --from-literal=spring.data.redis.ssl=true
 
+```
+
+### ArgoCD
+```
 
 ```
