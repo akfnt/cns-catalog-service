@@ -10,7 +10,7 @@ env:
   OWNER: akfnt
   REGISTRY: ghcr.io
   APP_REPO: cns-catalog-service
-  DEPLOY_REPO: polar-deployment
+  DEPLOY_REPO: cns-polar-deployment
   VERSION: ${{ github.sha }}
 
 jobs:                                   # 단순 메시지 출력으로 대체. 테스트 수행 전에 릴리스 후보를 스테이징 환경에 배포하는 부분도 빠져있음
@@ -44,7 +44,7 @@ jobs:                                   # 단순 메시지 출력으로 대체. 
     runs-on: ubuntu-22.04
     steps:
       - name: Deliver application to production
-        uses: peter-evans/repository-dispatch@v2                  # 다른 저장소에서 워크플로를 시작하도록 이벤트를 보내는 액션
+        uses: peter-evans/repository-dispatch@v3                  # 다른 저장소에서 워크플로를 시작하도록 이벤트를 보내는 액션
         with:
           token: ${{ secrets.DISPATCH_TOKEN }}                    # 다른 저장소로 이벤트를 보낼 수 있도록 하기 위한 액션 권한을 위한 토큰
           repository: ${{ env.OWNER }}/${{ env.DEPLOY_REPO }}     # 알릴 저장소
