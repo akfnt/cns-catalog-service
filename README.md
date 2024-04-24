@@ -242,3 +242,41 @@ kubectl get ingress
 ```
 ab -n 21 -c 1 -m POST http://localhost:9000/orders
 ```
+
+### 디지털 오션
+```
+API token 사용해 doctl 에 대한 액세스 권한 얻기 (인증 컨텍스트 지정) - doctl 설치 및 디지털 오션 컨트롤 패널에서 API token 발급 먼저 해야함
+doctl auth init --context <NAME>
+doctl auth list
+doctl auth switch --context <NAME>
+doctl account get
+
+쿠버네티스 클러스터 실행
+doctl k8s options regions
+doctl k8s cluster create polar-cluster --node-pool "name=basicnp;size=s-2vcpu-4gb;count=3;label=type=basic;" --region sgp1
+doctl k8s cluster list
+kubectl config current-context
+
+PostgreSQL DB 실행
+doctl database create polar-db --engine pg --region sgp1 --version 14
+doctl database list
+doctl database firewalls append <postgres_id> --rule k8s:<cluster_id>
+doctl database db create <postgres_id> polardb_catalog
+doctl database db create <postgres_id> polardb_order
+doctl databases connection <postgres_id> --format Host,Port,User,Password
+
+kubectl create secret generic polar-postgres-catalog-service-credentials --from-literal=spring.datasource.url=jdbc:postgre
+sql://<postgres_host>:<postgres_port>/polardb_catalog --from-literal=spring.datasource.username=<postgres_username> --from-literal=spring.datasource.password=<postgres_password>
+
+kubectl create secret generic polar-postgres-order-service-credentials --from-literal=spring.flyway.url="jdbc:postgresql:/
+/<postgres_host>:<postgres_port>/polardb_order" --from-literal="spring.r2dbc.url=r2dbc:postgresql://polar-db-do-user-16449157-0.c.db.ondigitalocean.com:25060/polardb_order?ssl=true&sslMode=require" --from-literal=spring.datasource.username=<postgres_username> --from-literal=spring.datasource.password=<postgres_password>
+
+Redis 실행
+doctl database create polar-redis --engine redis --region sgp1 --version 7
+doctl databases firewalls append <redis_id> --rule k8s:<cluster_id>
+doctl databases connection <redis_id> --format Host,Port,User,Password
+
+kubectl create secret generic polar-redis-credentials --from-literal=spring.data.redis.host=<redis_host> --from-literal=spring.data.redis.port=<redis_port> --from-literal=spring.data.redis.username=<redis_username> --from-literal=spring.data.redis.password=<redis_password> --from-literal=spring.data.redis.ssl=true
+
+
+```
