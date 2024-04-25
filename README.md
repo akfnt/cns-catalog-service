@@ -271,18 +271,25 @@ kubectl create secret generic polar-postgres-catalog-credentials --from-literal=
 sql://<postgres_host>:<postgres_port>/polardb_catalog --from-literal=spring.datasource.username=<postgres_username> --from-literal=spring.datasource.password=<postgres_password>
 
 kubectl create secret generic polar-postgres-order-credentials --from-literal=spring.flyway.url="jdbc:postgresql:/
-/<postgres_host>:<postgres_port>/polardb_order" --from-literal="spring.r2dbc.url=r2dbc:postgresql://polar-db-do-user-16449157-0.c.db.ondigitalocean.com:25060/polardb_order?ssl=true&sslMode=require" --from-literal=spring.datasource.username=<postgres_username> --from-literal=spring.datasource.password=<postgres_password>
+/<postgres_host>:<postgres_port>/polardb_order" --from-literal="spring.r2dbc.url=r2dbc:postgresql://<postgres_host>:<postgres_port>/polardb_order?ssl=true&sslMode=require" --from-literal=spring.datasource.username=<postgres_username> --from-literal=spring.datasource.password=<postgres_password>
 
 Redis 실행
 doctl database create polar-redis --engine redis --region sgp1 --version 7
 doctl databases firewalls append <redis_id> --rule k8s:<cluster_id>
 doctl databases connection <redis_id> --format Host,Port,User,Password
 
-kubectl create secret generic polar-redis-credentials --from-literal=spring.data.redis.host=<redis_host> --from-literal=spring.data.redis.port=<redis_port> --from-literal=spring.data.redis.username=<redis_username> --from-literal=spring.data.redis.password=<redis_password> --from-literal=spring.data.redis.ssl=true
+kubectl create secret generic polar-redis-credentials --from-literal=spring.redis.host= --from-literal=spring.redis.port= --from-literal=spring.redis.username= --from-literal=spring.redis.password= --from-literal=spring.redis.ssl=true
+
+ArgoCD - 클러스터에 ArgoCD 설치 후
+kubectl -n argocd get secret argocd-initial-admin-secret -o jsonpath="{.data.password}" | base64 =d; echo
+kubectl -n argocd get service argocd-server
 
 ```
 
 ### ArgoCD
 ```
+argocd login <argocd-external-ip>
+argocd app create cns-catalog-service --repo https://github.com/akfnt/cns-polar-deployment.git --path kubernetes/applications/cns-catalog-service/production --dest-server https://kubernetes.default.svc --dest-namespace default --sync-policy auto --auto-prune
+argocd app get cns-catalog-service
 
 ```
